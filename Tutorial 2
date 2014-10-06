@@ -11,8 +11,8 @@ import Test.QuickCheck
 -- 1.
 rotate :: Int -> [Char] -> [Char]
 rotate n alpha |n<=0 || n > length alpha = "ERROR"
-               |otherwise = drop n alpha ++ dropped
-                            where dropped = take n alpha
+       	       |otherwise = drop n alpha ++ dropped 
+	       		  where dropped = take n alpha
 
 -- 2.
 prop_rotate :: Int -> String -> Bool
@@ -22,21 +22,25 @@ prop_rotate k str = rotate (l - m) (rotate m str) == str
 
 -- 3. 
 makeKey :: Int -> [(Char, Char)]
-makeKey n = zip alphabet shuffle 
-            where  alphabet = ['A'..'Z']
-                   shuffle = rotate n alphabet
+makeKey n = zip alphabet shuffle
+	  where alphabet = ['A'..'Z']
+	  	shuffle = rotate n alphabet
 
 -- 4.
 lookUp :: Char -> [(Char, Char)] -> Char
-lookUp letter cypher | isUpper letter = head [snd x|x<-cypher,fst x == letter]
-                     | otherwise = letter
+lookUp letter cypher | (isUpper letter) && not(cypher==[]) = head [snd x | x<- cypher, fst x == letter]
+       	      	     |otherwise = letter
 
 lookUpRec :: Char -> [(Char, Char)] -> Char
-lookUpRec = 
-  
-prop_lookUp :: Char -> [(Char, Char)] -> Char
-prop_lookUp = undefined  
-  
+lookUpRec n [] = n
+lookUpRec n (x:xs) |not (isUpper n) = n
+	    	   |fst x == n = snd x
+		   |otherwise = lookUpRec n xs
+
+prop_lookUp :: Char -> [(Char, Char)] -> Bool
+cypher  = makeKey 5
+prop_lookUp n cypher = lookUp n cypher == lookUpRec n cypher
+
 -- 5.
 encipher :: Int -> Char -> Char
 encipher = undefined
