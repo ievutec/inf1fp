@@ -37,45 +37,54 @@ lookUpRec n (x:xs) |not (isUpper n) = n
 	    	   |fst x == n = snd x
 		   |otherwise = lookUpRec n xs
 
-prop_lookUp :: Char -> [(Char, Char)] -> Bool
-cypher  = makeKey 5
-prop_lookUp n cypher = lookUp n cypher == lookUpRec n cypher
+prop_lookUp :: Char -> Bool
+cypher = makeKey 5
+prop_lookUp n = lookUp n cypher == lookUpRec n cypher
 
 -- 5.
 encipher :: Int -> Char -> Char
-encipher = undefined
+encipher n letter = lookUp letter (makeKey n)
 
 -- 6.
 normalize :: String -> String
-normalize = undefined
+normalize [] = []
+normalize (x:xs) |isLetter x = (toUpper x) : normalize xs
+	  	 |isDigit x = x:normalize xs
+		 |otherwise = normalize xs
 
 -- 7.
 encipherStr :: Int -> String -> String
-encipherStr = undefined
+encipherStr n sentence = [encipher n x|x<-(normalize sentence)]
 
 -- 8.
 reverseKey :: [(Char, Char)] -> [(Char, Char)]
-reverseKey = undefined
+reverseKey xs = [(snd x,fst x)|x<-xs]
 
 reverseKeyRec :: [(Char, Char)] -> [(Char, Char)]
-reverseKeyRec = undefined
+reverseKeyRec [] = []
+reverseKeyRec (x:xs) = (snd x,fst x):reverseKeyRec xs
 
 prop_reverseKey :: [(Char, Char)] -> Bool
-prop_reverseKey = undefined
+prop_reverseKey xs = reverseKey xs == reverseKeyRec xs
+
+
 -- 9.
 decipher :: Int -> Char -> Char
-decipher = undefined
+decipher n letter = lookUp letter (reverseKey (makeKey n))
 
 decipherStr :: Int -> String -> String
-decipherStr = undefined
+decipherStr n words = [decipher n x|x<-(normalize words)]
 
 -- 10.
 contains :: String -> String -> Bool
-contains = undefined
+contains [] bit = False
+contains full bit |take (length bit) full == bit = True
+	     	  |otherwise = contains (tail full) bit
 
 -- 11.
 candidates :: String -> [(Int, String)]
-candidates = undefined
+candidates word = [x|x<-xs, contains (snd x) "THE" || contains (snd x) "AND"]
+	   	where xs = zip [1..26] [decipherStr x word|x<-[1..26]]
 
 
 
