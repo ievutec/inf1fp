@@ -10,7 +10,7 @@ import Test.QuickCheck
 
 -- 1.
 rotate :: Int -> [Char] -> [Char]
-rotate n alpha |n<=0 || n > length alpha = "ERROR"
+rotate n alpha |n<=0 || n > length alpha = error "Error!"
        	       |otherwise = drop n alpha ++ dropped 
 	       		  where dropped = take n alpha
 
@@ -78,7 +78,7 @@ decipherStr n words = [decipher n x|x<-(normalize words)]
 -- 10.
 contains :: String -> String -> Bool
 contains [] bit = False
-contains full bit |take (length bit) full == bit = True
+contains full bit |isPrefixOf bit full = True
 	     	  |otherwise = contains (tail full) bit
 
 -- 11.
@@ -92,19 +92,22 @@ candidates word = [x|x<-xs, contains (snd x) "THE" || contains (snd x) "AND"]
 
 -- 12.
 splitEachFive :: String -> [String]
-splitEachFive = undefined
+splitEachFive [] = []
+splitEachFive word | length word >= 5 = (take 5 word) : splitEachFive (drop 5 word)
+	      	   | length  word < 5 = splitEachFive(word++"X")
 
 -- 13.
 prop_transpose :: String -> Bool
-prop_transpose = undefined
+prop_transpose words = splitEachFive words == afterManip
+	       	     where afterManip =transpose(transpose(splitEachFive words))
 
 -- 14.
 encrypt :: Int -> String -> String
-encrypt = undefined
+encrypt n message = concat(transpose(splitEachFive(encipherStr n message)))
 
 -- 15.
 decrypt :: Int -> String -> String
-decrypt = undefined
+decrypt =
 
 -- Challenge (Optional)
 
