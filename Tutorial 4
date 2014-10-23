@@ -108,10 +108,12 @@ dropUntil stopper words | not (contains words stopper) = []
 
 -- 5.
 split :: String -> String -> [String]
-split = undefined
+split [] words = error "The delim is empty."
+split bitty [] = []
+split bitty words = takeUntil bitty words : split bitty (dropUntil bitty words) 
 
 reconstruct :: String -> [String] -> String
-reconstruct = undefined
+reconstruct bit (y:ys) = y ++ concat[bit++x|x<-ys]
 
 prop_split :: Char -> String -> String -> Bool
 prop_split c sep str = reconstruct sep' (split sep' str) `sameString` str
