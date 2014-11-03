@@ -5,7 +5,6 @@
 
 import System.Random
 
-
 -- Importing the keymap module
 
 import KeymapList
@@ -42,22 +41,25 @@ formatLine :: Int -> (Barcode, Item) -> String
 formatLine n xs = concat[fst xs,"...",take n (fst (snd xs) ++ (repeat '.')), "...", snd (snd xs)]
 
 showCatalogue :: Catalogue -> String
-showCatalogue cat = [formatLine (longestProductLen (toList cat) x)|x<-(toList cat)]
+showCatalogue cat = unlines[formatLine (longestProductLen catList) x|x<-catList]
+  where catList = toList cat
      
 -- Exercise 2
 maybeToList :: Maybe a -> [a]
-maybeToList = undefined
+maybeToList Nothing = []
+maybeToList (Just x) = [x]
 
 listToMaybe :: [a] -> Maybe a
-listToMaybe = undefined
+listToMaybe [] = Nothing
+listToMaybe (x:_) = Just x
 
 catMaybes :: [Maybe a] -> [a]
-catMaybes = undefined
+catMaybes xs = concat(map maybeToList xs)
 
 -- Exercise 3
 
 getItems :: [Barcode] -> Catalogue -> [Item]
-getItems = undefined
+getItems nums cat = catMaybes[get x cat|x<-nums]
 
 
 
@@ -88,3 +90,36 @@ splitUpon c (x:xs) | x == c    = ("",xs)
 getSample :: Catalogue -> IO Barcode
 getSample db = do g <- newStdGen
                   return $ fst $ toList db !! fst (randomR (0,size db - 1) g)
+                  
+-- *Main> :load tutorial6.hs
+--[1 of 2] Compiling KeymapList       ( KeymapList.hs, interpreted )
+--[2 of 2] Compiling Main             ( tutorial6.hs, interpreted )
+--Ok, modules loaded: KeymapList, Main.
+--(0.03 secs, 24321280 bytes)
+-- *Main> theDB <-readDB
+--Done
+--(0.80 secs, 1697622456 bytes)
+-- *Main> getSample theDB 
+--"0085844589584"
+--(0.02 secs, 2802256 bytes)
+-- *Main> get it theDB 
+--Just ("DIG ITL SAUS/T.TORT 58958","9    OZ")
+--(0.17 secs, 70184048 bytes)
+-- *Main> getSample theDB 
+--"0028945535920"
+--(0.01 secs, 512712 bytes)
+-- *Main> get it theDB 
+--Just ("LESSING KOLJA - PIANO MUSIC","CD")
+--(0.08 secs, 27284344 bytes)
+-- *Main> getSample theDB 
+--"0033383675947"
+--(0.02 secs, 1060112 bytes)
+-- *Main> get it theDB 
+--Just ("White Mushrooms","10 oz")
+--(0.18 secs, 73586584 bytes)
+-- *Main> getSample theDB 
+--"0079400867209"
+--(0.01 secs, 1061408 bytes)
+-- *Main> get it theDB 
+--Just ("Dove 2-in1 Shampoo/Cond. Extra Volume","12 oz. bottle")
+--(0.01 secs, 2130216 bytes)
