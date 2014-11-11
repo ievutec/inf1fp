@@ -61,8 +61,13 @@ spiral side n step angle = (Go side :#: Turn angle) :#: spiral (side+step) (n-1)
 -- Exercise 4
 -- optimise
 optimise :: Command -> Command
-optimise = undefined
-
+optimise c = foldr (opt) (Go 0) (split c)
+  where opt (Go n) (Go m) = Go (n+m)
+        opt (Turn o) (Turn p) = Turn (o+p)
+        opt a Sit = a
+        opt Sit a = a
+        opt (Go x) (Turn y) = Go x :#: Turn y
+        opt (Turn x) (Go y) = Turn x :#: Go y
 
 
 -- L-Systems
