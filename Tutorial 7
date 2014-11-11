@@ -1,4 +1,3 @@
-
 -- Informatics 1 - Functional Programming 
 -- Tutorial 7
 --
@@ -27,30 +26,36 @@ equivalent :: Command -> Command -> Bool
 equivalent c1 c2 = and[x==y|(x,y)<- zip (split c1) (split c2)]
 
 -- 1d. testing join and split
-prop_split_join = undefined
+prop_split_join :: Command -> Bool
+prop_split_join c = equivalent (join (split c)) c
 
-prop_split = undefined
+prop_split :: Command -> Bool
+prop_split lst = and [eval x|x<-(split lst)]
+	   where eval Sit = False
+	   	 eval (_ :#: _) = False
+		 eval _ = True
 
 
 -- Exercise 2
 -- 2a. copy
 copy :: Int -> Command -> Command
-copy = undefined
+copy n c = foldr (:#:) c (replicate (n-1) c)
 
 -- 2b. pentagon
 pentagon :: Distance -> Command
-pentagon = undefined
+pentagon d = copy 5 (Go d :#: Turn 72.0)
 
 -- 2c. polygon
 polygon :: Distance -> Int -> Command
-polygon = undefined
+polygon d sides = copy sides (Go d :#: Turn (360/fromIntegral(sides)))
 
 
 
 -- Exercise 3
 -- spiral
 spiral :: Distance -> Int -> Distance -> Angle -> Command
-spiral = undefined
+spiral _ 0 _ _ = Sit
+spiral side n step angle = (Go side :#: Turn angle) :#: spiral (side+step) (n-1) step angle
 
 
 -- Exercise 4
